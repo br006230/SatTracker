@@ -1,16 +1,43 @@
-# React + Vite
+# SatTracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A small personal web app for monitoring specific satellites in low Earth orbit
+on an interactive 3D globe. Built with React + Vite + CesiumJS (via Resium)
++ satellite.js. TLEs are fetched from CelesTrak; orbital propagation runs in
+the browser.
 
-Currently, two official plugins are available:
+The app ships with a pre-populated monitoring list (WorldView-1/-2/-3,
+GeoEye-1, WorldView Legion 1-6). Satellites can be added by NORAD ID or name,
+removed, and focused. The list persists in `localStorage`.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Run locally
 
-## React Compiler
+```
+npm install
+npm run dev
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Then open the URL printed by Vite (typically `http://localhost:5173`).
 
-## Expanding the ESLint configuration
+## Other scripts
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Command         | Purpose                                       |
+|-----------------|-----------------------------------------------|
+| `npm run dev`   | Start the dev server with hot reload          |
+| `npm test`      | Run the unit test suite (Vitest, headless)    |
+| `npm run build` | Produce a static, deployable bundle in `dist/`|
+| `npm run preview` | Serve the built bundle locally to verify it |
+| `npm run lint`  | Run ESLint                                    |
+
+## Deploy
+
+`npm run build` produces a fully static `dist/` directory (HTML, JS, CSS, and
+Cesium's asset folders). Drop it on any static host — GitHub Pages, Netlify,
+Vercel, S3, an Nginx box, etc. No backend or server-side code.
+
+## Notes
+
+- Imagery uses OpenStreetMap tiles so no Cesium Ion access token is required.
+- TLEs are fetched on first load. Click **⟳ Refresh TLEs** in the toolbar to
+  re-fetch on demand.
+- Position updates run at ~1 Hz.
+

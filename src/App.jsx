@@ -1,8 +1,13 @@
+import 'cesium/Build/Cesium/Widgets/widgets.css';
+import { AppProvider } from './state/AppContext.jsx';
+import Globe from './components/Globe.jsx';
+
 export default function App() {
   return (
-    <div style={{ padding: '1rem' }}>
-      <h1>SatTracker</h1>
-      <p>Skeleton scaffolded. Globe and panel coming next.</p>
-    </div>
+    <AppProvider>
+      <div style={{ position: 'absolute', inset: 0 }}>
+        <Globe />
+      </div>
+    </AppProvider>
   );
 }

@@ -14,6 +14,7 @@ export const ACT = {
   TLE_FETCH_SUCCESS: 'TLE_FETCH_SUCCESS',
   TLE_FETCH_ERROR: 'TLE_FETCH_ERROR',
   UPDATE_POSITIONS: 'UPDATE_POSITIONS',
+  FOCUS_REQUEST: 'FOCUS_REQUEST',
 };
 
 // Build the initial state. On first run (no persisted list) the user gets
@@ -27,6 +28,7 @@ export function buildInitialState() {
     tleCache: loadTLECache() ?? {},
     positions: {},
     selectedId: null,
+    focusRequest: null,
     status: {
       lastFetchedAt: loadLastFetchedAt(),
       fetching: false,
@@ -84,6 +86,12 @@ export function reducer(state, action) {
 
     case ACT.UPDATE_POSITIONS:
       return { ...state, positions: action.payload };
+
+    case ACT.FOCUS_REQUEST:
+      return {
+        ...state,
+        focusRequest: { id: action.payload, n: (state.focusRequest?.n ?? 0) + 1 },
+      };
 
     default:
       return state;

@@ -84,7 +84,7 @@ export default function Globe() {
 
   return (
     <Viewer
-      full
+      style={{ position: 'absolute', inset: 0 }}
       ref={viewerRef}
       imageryProvider={imageryProvider}
       terrainProvider={terrainProvider}

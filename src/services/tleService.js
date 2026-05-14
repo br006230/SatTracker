@@ -20,6 +20,29 @@ export async function fetchTLEByNoradId(noradId) {
   return { ...record, fetchedAt: Date.now() };
 }
 
+// Fetch a TLE by a free-form query: all-digit input is treated as a NORAD ID,
+// anything else is sent as a NAME search and the first match wins.
+export async function fetchTLEForQuery(query) {
+  const q = query.trim();
+  if (!q) throw new Error('Empty query');
+  if (/^[0-9]+$/.test(q)) return fetchTLEByNoradId(q);
+
+  const url = `${CELESTRAK_GP_URL}?NAME=${encodeURIComponent(q)}&FORMAT=TLE`;
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`CelesTrak request failed: ${res.status} ${res.statusText}`);
+  }
+  const text = (await res.text()).trim();
+  if (!text || text.toLowerCase().startsWith('no gp data')) {
+    throw new Error(`No TLE found for "${q}"`);
+  }
+  const records = parseTLEText(text);
+  if (records.length === 0) {
+    throw new Error(`No TLE found for "${q}"`);
+  }
+  return { ...records[0], fetchedAt: Date.now() };
+}
+
 // Fetch multiple satellites in parallel. Returns { ok: [...], failed: [...] }.
 export async function fetchTLEsByNoradIds(noradIds) {
   const results = await Promise.allSettled(noradIds.map(fetchTLEByNoradId));

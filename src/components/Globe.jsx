@@ -10,11 +10,14 @@ import { useApp } from '../state/AppContext.jsx';
 import { ACT } from '../state/reducer.js';
 
 // Avoid Cesium Ion: use OSM tiles for imagery and a plain ellipsoid for terrain.
-const imageryProvider = new Cesium.UrlTemplateImageryProvider({
-  url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-  credit: '© OpenStreetMap contributors',
-  maximumLevel: 19,
-});
+// Cesium 1.141 wants `baseLayer` (ImageryLayer), not the legacy `imageryProvider`.
+Cesium.Ion.defaultAccessToken = '';
+const baseLayer = new Cesium.ImageryLayer(
+  new Cesium.OpenStreetMapImageryProvider({
+    url: 'https://tile.openstreetmap.org/',
+    credit: '© OpenStreetMap contributors',
+  }),
+);
 const terrainProvider = new Cesium.EllipsoidTerrainProvider();
 
 const LABEL_OFFSET = new Cesium.Cartesian2(0, -16);
@@ -86,7 +89,7 @@ export default function Globe() {
     <Viewer
       style={{ position: 'absolute', inset: 0 }}
       ref={viewerRef}
-      imageryProvider={imageryProvider}
+      baseLayer={baseLayer}
       terrainProvider={terrainProvider}
       timeline={false}
       animation={false}

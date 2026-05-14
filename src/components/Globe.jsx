@@ -9,13 +9,15 @@ import {
 import { useApp } from '../state/AppContext.jsx';
 import { ACT } from '../state/reducer.js';
 
-// Avoid Cesium Ion: use OSM tiles for imagery and a plain ellipsoid for terrain.
-// Cesium 1.141 wants `baseLayer` (ImageryLayer), not the legacy `imageryProvider`.
+// Avoid Cesium Ion: use Esri World Imagery (satellite photos) and a plain
+// ellipsoid for terrain. Cesium 1.141 wants `baseLayer` (ImageryLayer), not
+// the legacy `imageryProvider`.
 Cesium.Ion.defaultAccessToken = '';
 const baseLayer = new Cesium.ImageryLayer(
-  new Cesium.OpenStreetMapImageryProvider({
-    url: 'https://tile.openstreetmap.org/',
-    credit: '© OpenStreetMap contributors',
+  new Cesium.UrlTemplateImageryProvider({
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    credit: 'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community',
+    maximumLevel: 19,
   }),
 );
 const terrainProvider = new Cesium.EllipsoidTerrainProvider();

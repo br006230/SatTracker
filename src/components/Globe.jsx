@@ -5,9 +5,13 @@ import {
   Entity,
   PointGraphics,
   LabelGraphics,
+  PolylineGraphics,
 } from 'resium';
 import { useApp } from '../state/AppContext.jsx';
 import { ACT } from '../state/reducer.js';
+import { useGroundTrack } from '../hooks/useGroundTrack.js';
+
+const TRACK_MIN_ALPHA = 0.05;
 
 // Avoid Cesium Ion: use Esri World Imagery (satellite photos) and a plain
 // ellipsoid for terrain. Cesium 1.141 wants `baseLayer` (ImageryLayer), not
@@ -28,6 +32,7 @@ export default function Globe() {
   const { state, dispatch } = useApp();
   const { monitoringList, tleCache, positions, selectedId, focusRequest } = state;
   const viewerRef = useRef(null);
+  const groundTrack = useGroundTrack();
 
   // Initial camera: pulled back so the whole Earth is visible.
   useEffect(() => {
@@ -45,6 +50,33 @@ export default function Globe() {
     const ent = v.entities.getById(focusRequest.id);
     if (ent) v.flyTo(ent, { duration: 1.2 });
   }, [focusRequest]);
+
+  // Ground-track for the selected satellite. One polyline segment per
+  // consecutive sample pair, alpha fading from near-zero at the oldest end
+  // to 1.0 at the newest (closest to the satellite marker).
+  const trackSegments = useMemo(() => {
+    if (groundTrack.length < 2) return [];
+    const n = groundTrack.length - 1; // segment count
+    return groundTrack.slice(0, -1).map((s, i) => {
+      const next = groundTrack[i + 1];
+      const positionsArr = Cesium.Cartesian3.fromDegreesArray([
+        s.lon, s.lat, next.lon, next.lat,
+      ]);
+      const alpha = TRACK_MIN_ALPHA + (1 - TRACK_MIN_ALPHA) * ((i + 1) / n);
+      const color = Cesium.Color.YELLOW.withAlpha(alpha);
+      return (
+        <Entity key={`track-${selectedId}-${s.t}`}>
+          <PolylineGraphics
+            positions={positionsArr}
+            width={2}
+            material={color}
+            arcType={Cesium.ArcType.GEODESIC}
+            clampToGround
+          />
+        </Entity>
+      );
+    });
+  }, [groundTrack, selectedId]);
 
   const entities = useMemo(
     () =>
@@ -104,6 +136,7 @@ export default function Globe() {
       infoBox={false}
       selectionIndicator={false}
     >
+      {trackSegments}
       {entities}
     </Viewer>
   );

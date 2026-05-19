@@ -21,6 +21,11 @@ export const CELESTRAK_GP_URL =
 // Position update interval (ms). 1 Hz per FR-7 / NFR-1.
 export const TICK_INTERVAL_MS = 1000;
 
+// Ground-track trail for the selected satellite.
+export const GROUND_TRACK_DURATION_MS = 30 * 60 * 1000; // 30 min
+export const GROUND_TRACK_STEP_MS = 10 * 1000;          // sample every 10 s
+export const GROUND_TRACK_REFRESH_MS = 60 * 1000;       // slide window each min
+
 // Versioned localStorage keys so future schema changes don't clobber data.
 export const STORAGE_KEYS = {
   monitoringList: 'sattracker.v1.monitoringList',

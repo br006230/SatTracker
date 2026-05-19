@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "postbuild": "if [ -d dist/firstrepo ]; then cp -r dist/firstrepo/. dist/ && rm -rf dist/firstrepo; fi",
+    "postbuild": "if [ -d dist/SatTracker ]; then cp -r dist/SatTracker/. dist/ && rm -rf dist/SatTracker; fi",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",

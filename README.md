@@ -9,6 +9,8 @@ The app ships with a pre-populated monitoring list (WorldView-1/-2/-3,
 GeoEye-1, WorldView Legion 1-6). Satellites can be added by NORAD ID or name,
 removed, and focused. The list persists in `localStorage`.
 
+This app was developed using Auggie AI SDLC by Brendan McDonald. 
+
 ## Run locally
 
 ```
